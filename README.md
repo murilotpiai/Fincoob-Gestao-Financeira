@@ -1,131 +1,98 @@
-# Fincoob — Controle Financeiro Pessoal
+# Fincoob - Gestao Financeira Pessoal
 
-Aplicativo web estático para controle financeiro pessoal, desenvolvido com HTML, CSS e JavaScript puro. O Fincoob permite registrar receitas e despesas, acompanhar indicadores, definir metas, controlar orçamento mensal por categoria, gerar relatórios e exportar/importar dados usando o próprio navegador.
+Aplicativo web para controle de gastos pessoais, feito com HTML, CSS e JavaScript puro. A proposta atual do Fincoob e ser simples, rapido e eficiente: registrar despesas, importar extratos, analisar o mes e receber dicas financeiras com apoio de IA.
 
-O projeto não utiliza backend nem banco de dados externo. Todas as informações ficam salvas localmente no navegador por meio do LocalStorage.
+- Repositorio: https://github.com/murilotpiai/Fincoob-Gestao-Financeira
 
-- Deploy: https://frontend-eta-weld-81aprrb45l.vercel.app/
-- Repositório: https://github.com/murilotpiai/Fincoob-Gestao-Financeira
+## Objetivo
 
-## Objetivo do projeto
-
-Criar uma aplicação completa, simples e profissional de gestão financeira pessoal para compor portfólio de estágio em TI, demonstrando organização de interface, manipulação de dados no frontend, persistência local, relatórios e visualização com gráficos.
+Criar uma ferramenta pessoal para entender para onde o dinheiro esta indo, sem excesso de telas e sem burocracia. O foco e facilitar o registro de gastos e transformar os dados em relatorios claros para tomada de decisao.
 
 ## Funcionalidades
 
-- Dashboard com saldo atual, receitas, despesas e resultado do mês.
-- Comparativo do mês atual com o mês anterior.
-- KPI de patrimônio investido e previsão simples de evolução.
-- Personalização dos gráficos exibidos no dashboard.
-- Últimos lançamentos e categorias com maior gasto.
-- Dicas financeiras automáticas com base nos dados cadastrados.
-- Cadastro, edição e exclusão de receitas e despesas.
-- Campos de descrição, valor, data, categoria, tipo, forma de pagamento e observação.
-- Máscara monetária em real brasileiro.
-- Categorias padrão para receitas e despesas.
-- Criação, edição e remoção de categorias personalizadas.
-- Metas financeiras com valor desejado, valor atual, prazo, progresso e valor restante.
-- Aporte direto em metas cadastradas, sem precisar editar a meta inteira.
-- Previsão de aporte médio mensal necessário para cumprir o prazo da meta.
-- Sugestão automática de meta com base nos gastos do mês.
-- Orçamento mensal por categoria com alertas de limite.
-- Cadastro e acompanhamento de investimentos.
-- Projeção estimada de investimentos em 12 meses com valor atual, aporte mensal e rentabilidade anual estimada.
-- Relatórios por período, categoria, tipo e forma de pagamento.
-- Gráficos de barras, rosca, linha e área para receitas x despesas, despesas por categoria, evolução do saldo, patrimônio, investimentos, forma de pagamento e orçamento.
-- Exportação de dados e relatórios para JSON, Excel e Word.
-- Importação de backup em JSON.
-- Limpeza de todos os dados com confirmação.
-- Tema claro e escuro.
-- Interface responsiva.
+- Cadastro rapido de gastos com valor, descricao, categoria, data, pagamento e observacao.
+- Sugestao automatica de categoria com base na descricao.
+- Relatorio mensal com total de gastos, media diaria, maior categoria e entradas detectadas.
+- Graficos de gastos por categoria e evolucao diaria.
+- Historico editavel de lancamentos.
+- Importacao e analise de extratos em CSV, TXT, OFX, XLS e XLSX.
+- Deteccao de possiveis duplicados ao importar extratos.
+- Exportacao dos lancamentos em CSV.
+- Tema claro e escuro com visual futurista.
+- Segunda pagina com assistente financeiro IA.
+- Modo local de conselhos quando o site e aberto pelo arquivo `file://`.
+- Endpoint seguro para conectar com a OpenAI sem expor a chave no navegador.
 
-## Tecnologias utilizadas
+## Assistente IA
+
+A pagina `frontend/ia.html` le os dados salvos no LocalStorage do Fincoob e permite conversar com um assistente financeiro. Quando o site esta rodando apenas como arquivo local, o assistente usa uma analise local simples. Quando publicado com backend/serverless, ele chama o endpoint:
+
+```text
+frontend/api/finance-coach.js
+```
+
+Para ativar o GPT real no servidor, configure as variaveis de ambiente:
+
+```env
+OPENAI_API_KEY=sua_chave_da_openai
+OPENAI_MODEL=gpt-4.1-mini
+```
+
+Nunca coloque a chave da OpenAI dentro do HTML, CSS ou JavaScript publico.
+
+## Tecnologias
 
 - HTML5
 - CSS3
 - JavaScript
 - LocalStorage
 - Chart.js
-- SheetJS (xlsx)
-- Vercel
+- SheetJS
+- OpenAI Responses API
+- Vercel/serverless para o endpoint da IA
 
 ## Como executar localmente
 
-1. Clone o repositório:
-
-```bash
-git clone https://github.com/murilotpiai/Fincoob-Gestao-Financeira.git
-cd Fincoob-Gestao-Financeira
-```
-
-2. Abra o arquivo no navegador:
+Abra o arquivo abaixo no navegador:
 
 ```text
 frontend/index.html
 ```
 
-Não há etapa de build, servidor, autenticação ou banco de dados. O projeto é compatível com deploy estático na Vercel.
+Para acessar o assistente:
 
-## Estrutura do projeto
+```text
+frontend/ia.html
+```
+
+## Como publicar com IA
+
+1. Publique a pasta `frontend` como raiz do projeto em uma plataforma que suporte rotas serverless, como Vercel.
+2. Configure `OPENAI_API_KEY` nas variaveis de ambiente.
+3. Acesse o site pela URL publicada, nao pelo `file://`.
+4. A pagina da IA chamara automaticamente `/api/finance-coach`.
+
+## Estrutura
 
 ```text
 Fincoob-Gestao-Financeira-main/
 |-- frontend/
-|   |-- index.html
+|   |-- api/
+|   |   `-- finance-coach.js
+|   |-- .env.example
+|   |-- ai.js
 |   |-- app.js
-|   |-- style.css
-|   `-- script.js
+|   |-- ia.html
+|   |-- index.html
+|   `-- style.css
 |-- docs/
-|   `-- images/
 |-- README.md
 `-- .gitignore
 ```
 
-## Prints do sistema
-
-Adicione ou atualize os prints abaixo conforme novas telas forem publicadas:
-
-```text
-docs/images/fincoob-home.png
-docs/images/fincoob-mobile.png
-```
-
-Sugestões de prints para GitHub e LinkedIn:
-
-- Dashboard com dados preenchidos.
-- Tela de lançamentos com filtros.
-- Relatórios com gráficos.
-- Tela de metas financeiras.
-- Tela de investimentos e projeção de patrimônio.
-- Orçamento mensal por categoria.
-- Backup e exportação.
-
-## Aprendizados obtidos
-
-- Organização de uma aplicação frontend sem framework.
-- Persistência de dados com LocalStorage.
-- Estruturação de estado local no navegador.
-- Criação de CRUDs com JavaScript puro.
-- Validação e normalização de dados.
-- Geração de indicadores financeiros.
-- Uso de Chart.js para visualização de dados.
-- Criação de gráficos mais adequados para análise financeira: rosca para composição, barras para comparação e linha/área para evolução.
-- Exportação e importação de informações em JSON e Excel.
-- Criação de interface responsiva para desktop e mobile.
-
-## Melhorias futuras
-
-- Adicionar testes automatizados para funções de cálculo.
-- Criar opção de recorrência para despesas fixas.
-- Permitir anexar comprovantes localmente.
-- Criar simulação de parcelamento de cartão de crédito.
-- Melhorar acessibilidade com atalhos de teclado e testes com leitores de tela.
-- Adicionar PWA para instalação no celular.
-- Criar uma versão futura com backend e autenticação.
-
 ## Autor
 
-Desenvolvido por Murilo Turcato Piai, estudante de Sistemas de Informação na UNIFAFIBE, com interesse em desenvolvimento web, análise de dados, Power BI, Python, JavaScript, banco de dados, Docker e sistemas ERP.
+Desenvolvido por Murilo Turcato Piai.
 
 - LinkedIn: https://www.linkedin.com/in/mtpiai
 - GitHub: https://github.com/murilotpiai
