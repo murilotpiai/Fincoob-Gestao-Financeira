@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fincoob IA - Conselheiro financeiro</title>
+  <meta name="description" content="Assistente financeiro do Fincoob para analisar gastos pessoais e sugerir economia." />
+  <link rel="stylesheet" href="style.css?v=20260601-ai" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">F</div>
+        <div>
+          <h1>Fincoob IA</h1>
+          <p>Conselhos de economia conectados aos seus gastos</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a class="btn" href="index.html">Voltar aos gastos</a>
+        <button id="btnTheme" class="btn icon" type="button">Tema claro</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container app-main ai-main">
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <section class="hero ai-hero">
+      <div>
+        <span class="eyebrow">Agente financeiro</span>
+        <h2>Receba dicas claras para gastar melhor, cortar excessos e planejar o proximo mes.</h2>
+      </div>
+      <div class="ai-status" id="aiStatus">Modo local ativo</div>
+    </section>
+
+    <section class="ai-grid">
+      <article class="panel chat-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Conversa</span>
+            <h3>Assistente de economia</h3>
+          </div>
+          <button id="btnClearChat" class="link-button" type="button">Limpar conversa</button>
+        </div>
+
+        <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+        <form id="advisorForm" class="advisor-form">
+          <label for="advisorQuestion">Pergunte algo sobre seus gastos</label>
+          <textarea id="advisorQuestion" rows="3" maxlength="800" placeholder="Ex.: Onde estou gastando demais? Como posso economizar R$ 300 este mes?"></textarea>
+          <div class="form-actions">
+            <button id="btnAskAi" class="btn primary" type="submit">Pedir analise</button>
+          </div>
+        </form>
+      </article>
+
+      <aside class="ai-side">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Resumo usado pela IA</span>
+              <h3>Seu mes</h3>
+            </div>
+          </div>
+          <div id="aiDataSummary" class="ai-data-summary"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Perguntas rapidas</span>
+              <h3>Comece por aqui</h3>
+            </div>
+          </div>
+          <div class="prompt-list" id="promptList"></div>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <script src="ai.js?v=20260601-ai"></script>
+</body>
+</html>
