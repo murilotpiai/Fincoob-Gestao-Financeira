@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fincoob - Controle Financeiro Pessoal</title>
-  <meta name="description" content="Aplicativo web estático para controle financeiro pessoal com dashboard, lançamentos, metas, orçamento e relatórios." />
-  <link rel="stylesheet" href="style.css" />
+  <title>Fincoob - Gastos pessoais</title>
+  <meta name="description" content="Fincoob simplificado para registrar gastos pessoais, importar extratos e analisar despesas." />
+  <link rel="stylesheet" href="style.css?v=20260601-ai" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -16,538 +16,212 @@
         <div class="logo" aria-hidden="true">F</div>
         <div>
           <h1>Fincoob</h1>
-          <p>Controle Financeiro Pessoal</p>
+          <p>Gastos pessoais, sem enrolação</p>
         </div>
       </div>
 
       <div class="header-actions">
-        <label class="user-field" for="userName">
-          <span>Usuário</span>
-          <input id="userName" type="text" maxlength="60" placeholder="Seu nome ou apelido" />
-        </label>
-        <button id="btnSaveUser" class="btn primary" type="button">Salvar</button>
-        <button id="btnTheme" class="btn icon-text" type="button">
-          <span class="theme-dot" aria-hidden="true"></span>
-          <span>Tema claro</span>
-        </button>
+        <a class="btn" href="ia.html">Assistente IA</a>
+        <button id="btnTheme" class="btn icon" type="button">Tema claro</button>
+        <button id="btnExport" class="btn" type="button">Exportar</button>
       </div>
     </div>
-
-    <nav class="container app-nav" aria-label="Navegação principal">
-      <button class="nav-link active" type="button" data-view="dashboard">Dashboard</button>
-      <button class="nav-link" type="button" data-view="lancamentos">Lançamentos</button>
-      <button class="nav-link" type="button" data-view="relatorios">Relatórios</button>
-      <button class="nav-link" type="button" data-view="metas">Metas</button>
-      <button class="nav-link" type="button" data-view="orcamento">Orçamento</button>
-      <button class="nav-link" type="button" data-view="investimentos">Investimentos</button>
-      <button class="nav-link" type="button" data-view="backup">Backup</button>
-    </nav>
   </header>
 
   <main class="container app-main">
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <section id="view-dashboard" class="view active">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Visão geral</span>
-          <h2>Dashboard financeiro</h2>
-        </div>
-        <p id="dashboardMonthLabel">Resumo do mês atual</p>
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Controle pessoal</span>
+        <h2>Registre rápido. Entenda para onde o dinheiro está indo.</h2>
       </div>
-
-      <div class="kpi-grid">
-        <article class="kpi-card">
-          <span>Saldo atual</span>
-          <strong id="kpiSaldoAtual">R$ 0,00</strong>
-          <small id="kpiTotalLancamentos">0 lançamentos</small>
-        </article>
-        <article class="kpi-card success">
-          <span>Total de receitas</span>
-          <strong id="kpiReceitas">R$ 0,00</strong>
-          <small>Entradas registradas</small>
-        </article>
-        <article class="kpi-card danger">
-          <span>Total de despesas</span>
-          <strong id="kpiDespesas">R$ 0,00</strong>
-          <small>Saídas registradas</small>
-        </article>
-        <article class="kpi-card accent">
-          <span>Resultado do mês</span>
-          <strong id="kpiResultadoMes">R$ 0,00</strong>
-          <small id="kpiComparativoMes">Sem mês anterior</small>
-        </article>
-        <article class="kpi-card">
-          <span>Patrimônio investido</span>
-          <strong id="kpiInvestimentos">R$ 0,00</strong>
-          <small id="kpiPrevisaoPatrimonio">Sem previsão</small>
-        </article>
-      </div>
-
-      <div class="dashboard-grid">
-        <section class="panel wide">
-          <div class="panel-head">
-            <h3>Gráficos no dashboard</h3>
-            <span>Personalização simples</span>
-          </div>
-          <div class="toggle-row" id="dashboardChartToggles">
-            <label><input type="checkbox" value="chartReceitasDespesasPanel" checked /> Receitas x despesas</label>
-            <label><input type="checkbox" value="chartCategoriasPanel" checked /> Despesas por categoria</label>
-            <label><input type="checkbox" value="chartPatrimonioPanel" checked /> Patrimônio e metas</label>
-          </div>
-        </section>
-
-        <section id="chartReceitasDespesasPanel" class="panel wide">
-          <div class="panel-head">
-            <h3>Receitas x despesas</h3>
-            <span>Evolução mensal</span>
-          </div>
-          <div class="chart-box"><canvas id="chartReceitasDespesas"></canvas></div>
-        </section>
-
-        <section id="chartCategoriasPanel" class="panel">
-          <div class="panel-head">
-            <h3>Despesas por categoria</h3>
-            <span>Mês atual</span>
-          </div>
-          <div class="chart-box"><canvas id="chartCategorias"></canvas></div>
-        </section>
-
-        <section id="chartPatrimonioPanel" class="panel">
-          <div class="panel-head">
-            <h3>Patrimônio e metas</h3>
-            <span>Projeção</span>
-          </div>
-          <div class="chart-box"><canvas id="chartPatrimonio"></canvas></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <h3>Últimos lançamentos</h3>
-            <button class="link-button" type="button" data-go-view="lancamentos">Ver todos</button>
-          </div>
-          <div id="ultimosLancamentos" class="stack-list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <h3>Maiores gastos</h3>
-            <span>Por categoria</span>
-          </div>
-          <div id="topCategorias" class="rank-list"></div>
-        </section>
-
-        <section class="panel wide">
-          <div class="panel-head">
-            <h3>Dicas financeiras</h3>
-            <span>Geradas com seus dados</span>
-          </div>
-          <div id="dicasFinanceiras" class="tips-grid"></div>
-        </section>
+      <div class="period-control">
+        <label for="filterMonth">Mês analisado</label>
+        <input id="filterMonth" type="month" />
       </div>
     </section>
 
-    <section id="view-lancamentos" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Movimentações</span>
-          <h2>Lançamentos financeiros</h2>
-        </div>
-        <p>Cadastre receitas e despesas com categoria, pagamento e observações.</p>
-      </div>
+    <section class="kpi-grid" aria-label="Resumo financeiro">
+      <article class="kpi-card danger">
+        <span>Gastos no mês</span>
+        <strong id="kpiExpenses">R$ 0,00</strong>
+        <small id="kpiExpenseCount">0 gastos registrados</small>
+      </article>
+      <article class="kpi-card">
+        <span>Média por dia</span>
+        <strong id="kpiDailyAverage">R$ 0,00</strong>
+        <small>Considerando dias com gasto</small>
+      </article>
+      <article class="kpi-card accent">
+        <span>Maior categoria</span>
+        <strong id="kpiTopCategory">-</strong>
+        <small id="kpiTopCategoryValue">Sem dados</small>
+      </article>
+      <article class="kpi-card success">
+        <span>Entradas detectadas</span>
+        <strong id="kpiIncome">R$ 0,00</strong>
+        <small>Vindas de extrato ou cadastro antigo</small>
+      </article>
+    </section>
 
-      <div class="content-grid">
-        <section class="panel form-panel">
-          <div class="panel-head">
-            <h3 id="transactionFormTitle">Novo lançamento</h3>
-            <button id="btnCancelTransactionEdit" class="link-button hidden" type="button">Cancelar edição</button>
-          </div>
-
-          <form id="transactionForm" class="form">
-            <input id="transactionId" type="hidden" />
-            <div class="form-row">
-              <label>Tipo</label>
-              <div class="segmented">
-                <input id="typeReceita" name="transactionType" type="radio" value="receita" checked />
-                <label for="typeReceita">Receita</label>
-                <input id="typeDespesa" name="transactionType" type="radio" value="despesa" />
-                <label for="typeDespesa">Despesa</label>
-              </div>
-            </div>
-            <div class="form-row">
-              <label for="transactionDescription">Descrição</label>
-              <input id="transactionDescription" type="text" maxlength="120" placeholder="Ex.: Salário, mercado, aluguel" required />
-            </div>
-            <div class="form-row two">
-              <div>
-                <label for="transactionAmount">Valor (R$)</label>
-                <input id="transactionAmount" type="text" inputmode="numeric" placeholder="0,00" required />
-              </div>
-              <div>
-                <label for="transactionDate">Data</label>
-                <input id="transactionDate" type="date" required />
-              </div>
-            </div>
-            <div class="form-row two">
-              <div>
-                <label for="transactionCategory">Categoria</label>
-                <select id="transactionCategory" required></select>
-              </div>
-              <div>
-                <label for="transactionPayment">Forma de pagamento</label>
-                <select id="transactionPayment" required>
-                  <option value="">Selecione</option>
-                  <option>Pix</option>
-                  <option>Dinheiro</option>
-                  <option>Cartão de débito</option>
-                  <option>Cartão de crédito</option>
-                  <option>Transferência</option>
-                  <option>Boleto</option>
-                  <option>Outro</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <label for="transactionNote">Observação</label>
-              <textarea id="transactionNote" maxlength="240" rows="3" placeholder="Detalhes opcionais do lançamento"></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn ghost" type="reset">Limpar</button>
-              <button id="btnSaveTransaction" class="btn primary" type="submit">Salvar lançamento</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <h3>Categorias</h3>
-            <span>Receitas e despesas</span>
-          </div>
-          <form id="categoryForm" class="inline-form">
-            <input id="categoryId" type="hidden" />
-            <input id="categoryName" type="text" maxlength="50" placeholder="Nova categoria" required />
-            <select id="categoryType" required>
-              <option value="despesa">Despesa</option>
-              <option value="receita">Receita</option>
-              <option value="ambos">Ambos</option>
-            </select>
-            <button id="btnSaveCategory" class="btn primary" type="submit">Adicionar</button>
-          </form>
-          <div id="categoryList" class="tag-list"></div>
-        </section>
-      </div>
-
-      <section class="panel">
-        <div class="table-toolbar">
+    <section class="work-grid">
+      <article class="panel quick-panel">
+        <div class="panel-head">
           <div>
-            <h3>Lançamentos cadastrados</h3>
-            <p>Use os filtros para encontrar movimentações específicas.</p>
-          </div>
-          <div class="filters">
-            <input id="filterText" type="search" placeholder="Buscar por descrição, categoria ou observação" />
-            <select id="filterType">
-              <option value="">Todos os tipos</option>
-              <option value="receita">Receitas</option>
-              <option value="despesa">Despesas</option>
-            </select>
-            <select id="filterCategory"></select>
-            <input id="filterStart" type="month" />
-            <input id="filterEnd" type="month" />
-            <button id="btnClearFilters" class="btn ghost" type="button">Limpar</button>
+            <span class="eyebrow">Gasto rápido</span>
+            <h3>Adicionar despesa</h3>
           </div>
         </div>
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Tipo</th>
-                <th>Categoria</th>
-                <th>Pagamento</th>
-                <th class="right">Valor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="transactionsTable"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
 
-    <section id="view-relatorios" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Análise</span>
-          <h2>Relatórios</h2>
-        </div>
-        <p>Filtre seus dados e exporte o relatório para Excel.</p>
-      </div>
-
-      <section class="panel">
-        <div class="filters report-filters">
-          <input id="reportStart" type="date" />
-          <input id="reportEnd" type="date" />
-          <select id="reportType">
-            <option value="">Todos os tipos</option>
-            <option value="receita">Receita</option>
-            <option value="despesa">Despesa</option>
-          </select>
-          <select id="reportCategory"></select>
-          <select id="reportPayment">
-            <option value="">Todas as formas</option>
-          </select>
-          <button id="btnExportReport" class="btn primary" type="button">Exportar Excel</button>
-        </div>
-      </section>
-
-      <div class="kpi-grid compact">
-        <article class="kpi-card success"><span>Entradas</span><strong id="reportReceitas">R$ 0,00</strong></article>
-        <article class="kpi-card danger"><span>Saídas</span><strong id="reportDespesas">R$ 0,00</strong></article>
-        <article class="kpi-card accent"><span>Saldo</span><strong id="reportSaldo">R$ 0,00</strong></article>
-        <article class="kpi-card"><span>Registros</span><strong id="reportCount">0</strong></article>
-      </div>
-
-      <div class="dashboard-grid">
-        <section class="panel">
-          <div class="panel-head"><h3>Saldo mensal</h3><span>Evolução</span></div>
-          <div class="chart-box"><canvas id="chartSaldo"></canvas></div>
-        </section>
-        <section class="panel">
-          <div class="panel-head"><h3>Por forma de pagamento</h3><span>Despesas</span></div>
-          <div class="chart-box"><canvas id="chartPagamento"></canvas></div>
-        </section>
-      </div>
-
-      <section class="panel">
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Tipo</th>
-                <th>Categoria</th>
-                <th>Pagamento</th>
-                <th class="right">Valor</th>
-              </tr>
-            </thead>
-            <tbody id="reportTable"></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-
-    <section id="view-metas" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Planejamento</span>
-          <h2>Metas financeiras</h2>
-        </div>
-        <p>Crie objetivos de economia e acompanhe o progresso.</p>
-      </div>
-
-      <div class="content-grid">
-        <section class="panel form-panel">
-          <div class="panel-head">
-            <h3 id="goalFormTitle">Nova meta</h3>
-            <button id="btnCancelGoalEdit" class="link-button hidden" type="button">Cancelar edição</button>
-          </div>
-          <form id="goalForm" class="form">
-            <input id="goalId" type="hidden" />
-            <div class="form-row">
-              <label for="goalName">Nome da meta</label>
-              <input id="goalName" type="text" maxlength="80" placeholder="Ex.: Reserva de emergência" required />
-            </div>
-            <div class="form-row two">
-              <div>
-                <label for="goalTarget">Valor desejado</label>
-                <input id="goalTarget" type="text" inputmode="numeric" placeholder="0,00" required />
-              </div>
-              <div>
-                <label for="goalCurrent">Valor atual</label>
-                <input id="goalCurrent" type="text" inputmode="numeric" placeholder="0,00" required />
-              </div>
-            </div>
-            <div class="form-row">
-              <label for="goalDeadline">Prazo</label>
-              <input id="goalDeadline" type="date" required />
-            </div>
-            <div class="form-row">
-              <label for="goalDescription">Descrição</label>
-              <textarea id="goalDescription" maxlength="200" rows="3" placeholder="Por que essa meta é importante?"></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn ghost" type="reset">Limpar</button>
-              <button id="btnSaveGoal" class="btn primary" type="submit">Salvar meta</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <h3>Sugestão automática</h3>
-            <span>Com base nos gastos</span>
-          </div>
-          <div id="goalSuggestion" class="suggestion-box"></div>
-        </section>
-      </div>
-
-      <section class="panel">
-        <div id="goalsList" class="cards-grid"></div>
-      </section>
-    </section>
-
-    <section id="view-orcamento" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Limites</span>
-          <h2>Orçamento mensal</h2>
-        </div>
-        <p>Defina limites por categoria e acompanhe quanto já foi usado.</p>
-      </div>
-
-      <section class="panel">
-        <form id="budgetForm" class="inline-form budget-form">
-          <select id="budgetCategory" required></select>
-          <input id="budgetMonth" type="month" required />
-          <input id="budgetLimit" type="text" inputmode="numeric" placeholder="Limite mensal" required />
-          <button class="btn primary" type="submit">Salvar orçamento</button>
-        </form>
-      </section>
-
-      <div class="dashboard-grid">
-        <section class="panel">
-          <div class="panel-head"><h3>Orçamento por categoria</h3><span>Mês selecionado</span></div>
-          <div class="chart-box"><canvas id="chartOrcamento"></canvas></div>
-        </section>
-        <section class="panel">
-          <div class="panel-head"><h3>Status dos limites</h3><span>Alertas visuais</span></div>
-          <div id="budgetList" class="budget-list"></div>
-        </section>
-      </div>
-    </section>
-
-    <section id="view-investimentos" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Patrimônio</span>
-          <h2>Investimentos</h2>
-        </div>
-        <p>Registre investimentos, acompanhe resultado estimado e veja uma projeção simples de evolução.</p>
-      </div>
-
-      <div class="kpi-grid compact">
-        <article class="kpi-card"><span>Total investido</span><strong id="investmentTotal">R$ 0,00</strong></article>
-        <article class="kpi-card success"><span>Aporte mensal</span><strong id="investmentMonthly">R$ 0,00</strong></article>
-        <article class="kpi-card accent"><span>Resultado estimado em 12 meses</span><strong id="investmentProjection">R$ 0,00</strong></article>
-        <article class="kpi-card"><span>Ativos cadastrados</span><strong id="investmentCount">0</strong></article>
-      </div>
-
-      <div class="content-grid">
-        <section class="panel form-panel">
-          <div class="panel-head">
-            <h3 id="investmentFormTitle">Novo investimento</h3>
-            <button id="btnCancelInvestmentEdit" class="link-button hidden" type="button">Cancelar edição</button>
-          </div>
-          <form id="investmentForm" class="form">
-            <input id="investmentId" type="hidden" />
-            <div class="form-row two">
-              <div>
-                <label for="investmentName">Nome</label>
-                <input id="investmentName" type="text" maxlength="80" placeholder="Ex.: Tesouro Selic, CDB, ETF" required />
-              </div>
-              <div>
-                <label for="investmentType">Tipo</label>
-                <select id="investmentType" required>
-                  <option>Renda fixa</option>
-                  <option>Fundo</option>
-                  <option>Ações</option>
-                  <option>ETF</option>
-                  <option>Cripto</option>
-                  <option>Outros</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row two">
-              <div>
-                <label for="investmentAmount">Valor atual</label>
-                <input id="investmentAmount" type="text" inputmode="numeric" placeholder="0,00" required />
-              </div>
-              <div>
-                <label for="investmentMonthlyContribution">Aporte mensal</label>
-                <input id="investmentMonthlyContribution" type="text" inputmode="numeric" placeholder="0,00" />
-              </div>
-            </div>
-            <div class="form-row two">
-              <div>
-                <label for="investmentReturn">Rentabilidade anual estimada (%)</label>
-                <input id="investmentReturn" type="text" inputmode="decimal" placeholder="10,00" />
-              </div>
-              <div>
-                <label for="investmentDate">Data inicial</label>
-                <input id="investmentDate" type="date" required />
-              </div>
-            </div>
-            <div class="form-actions">
-              <button class="btn ghost" type="reset">Limpar</button>
-              <button class="btn primary" type="submit">Salvar investimento</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <h3>Evolução estimada</h3>
-            <span>12 meses</span>
-          </div>
-          <div class="chart-box"><canvas id="chartInvestimentos"></canvas></div>
-        </section>
-      </div>
-
-      <section class="panel">
-        <div id="investmentList" class="cards-grid"></div>
-      </section>
-    </section>
-
-    <section id="view-backup" class="view">
-      <div class="page-title">
-        <div>
-          <span class="eyebrow">Dados locais</span>
-          <h2>Backup e exportação</h2>
-        </div>
-        <p>Os dados ficam no LocalStorage deste navegador. Faça backup antes de trocar de dispositivo.</p>
-      </div>
-
-      <div class="backup-grid">
-        <section class="panel">
-          <h3>Exportar dados</h3>
-          <p>Baixe todos os lançamentos, categorias, metas e orçamentos em JSON.</p>
-          <div class="button-row">
-            <button id="btnExportJson" class="btn primary" type="button">Exportar JSON</button>
-            <button id="btnExportAllExcel" class="btn" type="button">Exportar Excel</button>
-            <button id="btnExportWord" class="btn" type="button">Exportar Word</button>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h3>Importar backup</h3>
-          <p>Restaure um arquivo JSON exportado pelo Fincoob.</p>
-          <label class="file-button">
-            Selecionar arquivo JSON
-            <input id="backupImport" type="file" accept=".json,application/json" />
+        <form id="expenseForm" class="expense-form" novalidate>
+          <input id="expenseId" type="hidden" />
+          <label class="amount-field" for="amount">
+            <span>Valor</span>
+            <input id="amount" type="text" inputmode="numeric" placeholder="0,00" required />
+            <div id="error-amount" class="field-error"></div>
           </label>
-        </section>
 
-        <section class="panel danger-zone">
-          <h3>Limpar dados</h3>
-          <p>Remove todos os dados financeiros salvos neste navegador.</p>
-          <button id="btnClearData" class="btn danger" type="button">Limpar todos os dados</button>
-        </section>
+          <div class="form-row">
+            <label for="description">Descrição</label>
+            <input id="description" type="text" maxlength="120" placeholder="Ex.: mercado, gasolina, farmácia" required />
+            <div id="categorySuggestion" class="suggestion-row hidden"></div>
+            <div id="error-description" class="field-error"></div>
+          </div>
+
+          <div class="form-row two">
+            <div>
+              <label for="category">Categoria</label>
+              <select id="category" required></select>
+              <div id="quickCategories" class="quick-categories"></div>
+            </div>
+            <div>
+              <label for="date">Data</label>
+              <input id="date" type="date" required />
+              <div id="error-date" class="field-error"></div>
+            </div>
+          </div>
+
+          <div class="form-row two">
+            <div>
+              <label for="payment">Pagamento</label>
+              <select id="payment">
+                <option>Pix</option>
+                <option>Débito</option>
+                <option>Crédito</option>
+                <option>Dinheiro</option>
+                <option>Boleto</option>
+                <option>Transferência</option>
+                <option>Outro</option>
+              </select>
+            </div>
+            <div>
+              <label for="note">Observação</label>
+              <input id="note" type="text" maxlength="160" placeholder="Opcional" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button id="btnCancelEdit" class="btn ghost hidden" type="button">Cancelar</button>
+            <button class="btn primary" type="submit">Salvar gasto</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Relatório</span>
+            <h3>Análise do mês</h3>
+          </div>
+          <button id="btnClearFilters" class="link-button" type="button">Limpar filtros</button>
+        </div>
+
+        <div class="filters">
+          <input id="searchText" type="search" placeholder="Buscar descrição" />
+          <select id="filterCategory"></select>
+        </div>
+
+        <div id="insights" class="insights"></div>
+      </article>
+    </section>
+
+    <section class="report-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <h3>Gastos por categoria</h3>
+          <span id="categoryChartHint">Mês atual</span>
+        </div>
+        <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h3>Evolução diária</h3>
+          <span>Somente despesas</span>
+        </div>
+        <div class="chart-box"><canvas id="dailyChart"></canvas></div>
+      </article>
+    </section>
+
+    <section class="panel import-panel">
+      <div class="panel-head">
+        <div>
+          <span class="eyebrow">Extrato bancário</span>
+          <h3>Importar e analisar</h3>
+        </div>
+        <span id="importStatus">CSV, TXT, OFX ou XLSX</span>
+      </div>
+
+      <div class="import-grid">
+        <label class="drop-area" for="statementFile">
+          <strong>Selecionar extrato</strong>
+          <span>O Fincoob tenta identificar data, descrição e valor automaticamente.</span>
+          <input id="statementFile" type="file" accept=".csv,.txt,.ofx,.xlsx,.xls,text/csv,text/plain" />
+        </label>
+
+        <div class="paste-box">
+          <label for="statementPaste">Ou cole linhas do extrato</label>
+          <textarea id="statementPaste" rows="5" placeholder="Ex.: 01/06/2026; MERCADO CENTRAL; -86,70"></textarea>
+          <button id="btnParsePaste" class="btn" type="button">Analisar texto</button>
+        </div>
+      </div>
+
+      <div id="importSummary" class="import-summary hidden"></div>
+      <div id="importPreview" class="import-preview hidden"></div>
+      <div class="form-actions import-actions">
+        <button id="btnImportDetected" class="btn primary hidden" type="button">Importar lançamentos detectados</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="eyebrow">Histórico</span>
+          <h3>Lançamentos</h3>
+        </div>
+        <button id="btnClearData" class="link-button danger-link" type="button">Limpar tudo</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Pagamento</th>
+              <th>Origem</th>
+              <th class="right">Valor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="entriesTable"></tbody>
+        </table>
       </div>
     </section>
   </main>
 
-  <script src="app.js?v=20260514-4"></script>
+  <script src="app.js?v=20260601-ai"></script>
 </body>
 </html>
