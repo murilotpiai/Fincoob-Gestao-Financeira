@@ -170,7 +170,7 @@ async function askAdvisor(event) {
     saveChat();
     renderChat();
     setStatus("Modo local ativo");
-    toast("GPT ainda nao esta conectado. Usei a analise local.", "warning");
+    toast("Gemini ainda nao esta conectado. Usei a analise local.", "warning");
   } finally {
     setLoading(false);
   }
@@ -187,7 +187,7 @@ async function requestAi(question, summary) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Falha ao consultar o assistente.");
-  setStatus("GPT conectado");
+  setStatus("Gemini conectado");
   return data.answer || "Nao consegui gerar uma resposta agora.";
 }
 
@@ -241,7 +241,7 @@ function init() {
   renderSummary();
   renderPrompts();
   renderChat();
-  setStatus(location.protocol === "file:" ? "Modo local ativo" : "Pronto para GPT");
+  setStatus(location.protocol === "file:" ? "Modo local ativo" : "Pronto para Gemini");
 }
 
 window.addEventListener("error", (event) => reportError("erro global", event.error || event.message));
