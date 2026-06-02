@@ -21,7 +21,7 @@ Criar uma ferramenta pessoal para entender para onde o dinheiro esta indo, sem e
 - Tema claro e escuro com visual futurista.
 - Segunda pagina com assistente financeiro IA.
 - Modo local de conselhos quando o site e aberto pelo arquivo `file://`.
-- Endpoint seguro para conectar com a OpenAI sem expor a chave no navegador.
+- Endpoint seguro para conectar com o Gemini sem expor a chave no navegador.
 
 ## Assistente IA
 
@@ -31,14 +31,14 @@ A pagina `frontend/ia.html` le os dados salvos no LocalStorage do Fincoob e perm
 frontend/api/finance-coach.js
 ```
 
-Para ativar o GPT real no servidor, configure as variaveis de ambiente:
+Para ativar o Gemini real no servidor, configure as variaveis de ambiente:
 
 ```env
-OPENAI_API_KEY=sua_chave_da_openai
-OPENAI_MODEL=gpt-4.1-mini
+GEMINI_API_KEY=sua_chave_do_google_ai_studio
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
-Nunca coloque a chave da OpenAI dentro do HTML, CSS ou JavaScript publico.
+Nunca coloque a chave do Gemini dentro do HTML, CSS ou JavaScript publico.
 
 ## Tecnologias
 
@@ -48,7 +48,7 @@ Nunca coloque a chave da OpenAI dentro do HTML, CSS ou JavaScript publico.
 - LocalStorage
 - Chart.js
 - SheetJS
-- OpenAI Responses API
+- Gemini API
 - Vercel/serverless para o endpoint da IA
 
 ## Como executar localmente
@@ -68,7 +68,7 @@ frontend/ia.html
 ## Como publicar com IA
 
 1. Publique a pasta `frontend` como raiz do projeto em uma plataforma que suporte rotas serverless, como Vercel.
-2. Configure `OPENAI_API_KEY` nas variaveis de ambiente.
+2. Configure `GEMINI_API_KEY` nas variaveis de ambiente.
 3. Acesse o site pela URL publicada, nao pelo `file://`.
 4. A pagina da IA chamara automaticamente `/api/finance-coach`.
 
