@@ -1,18 +1,37 @@
 # Dependencies
 node_modules/
+.pnp/
+.pnp.js
 
 # Build outputs
 dist/
 build/
+coverage/
 .vercel/
 .netlify/
 
-# Environment
+# Environment files
 .env
 .env.local
+.env.*.local
+*.env
+!frontend/.env.example
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # OS / editors
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
