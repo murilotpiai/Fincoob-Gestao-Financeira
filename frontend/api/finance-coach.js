@@ -11,9 +11,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Metodo nao permitido." });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "OPENAI_API_KEY nao configurada no servidor." });
+    return res.status(500).json({ error: "GEMINI_API_KEY nao configurada no servidor." });
   }
 
   const { question, summary } = req.body || {};
@@ -22,24 +22,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        "x-goog-api-key": apiKey,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-        instructions,
-        input: `Dados financeiros do usuario:\n${JSON.stringify(summary || {}, null, 2)}\n\nPergunta do usuario:\n${question}`,
-        temperature: 0.4,
-        max_output_tokens: 700
+        systemInstruction: {
+          parts: [{ text: instructions }]
+        },
+        contents: [{
+          role: "user",
+          parts: [{
+            text: `Dados financeiros do usuario:\n${JSON.stringify(summary || {}, null, 2)}\n\nPergunta do usuario:\n${question}`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 700
+        }
       })
     });
 
     const data = await response.json();
     if (!response.ok) {
-      return res.status(response.status).json({ error: data.error?.message || "Erro ao chamar a OpenAI." });
+      return res.status(response.status).json({ error: data.error?.message || "Erro ao chamar o Gemini." });
     }
 
     return res.status(200).json({ answer: extractText(data) });
@@ -49,12 +58,6 @@ export default async function handler(req, res) {
 }
 
 function extractText(data) {
-  if (data.output_text) return data.output_text;
-  const parts = [];
-  for (const item of data.output || []) {
-    for (const content of item.content || []) {
-      if (content.text) parts.push(content.text);
-    }
-  }
-  return parts.join("\n").trim() || "Nao consegui gerar uma resposta agora.";
+  const parts = data.candidates?.flatMap((candidate) => candidate.content?.parts || []) || [];
+  return parts.map((part) => part.text || "").join("\n").trim() || "Nao consegui gerar uma resposta agora.";
 }
