@@ -6,6 +6,7 @@
   <title>Fincoob - Gastos pessoais</title>
   <meta name="description" content="Fincoob simplificado para registrar gastos pessoais, importar extratos e analisar despesas." />
   <link rel="stylesheet" href="style.css?v=20260601-ai" />
+  <link rel="stylesheet" href="entry-types.css?v=20260602-receitas" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -59,9 +60,9 @@
         <small id="kpiTopCategoryValue">Sem dados</small>
       </article>
       <article class="kpi-card success">
-        <span>Entradas detectadas</span>
+        <span>Receitas registradas</span>
         <strong id="kpiIncome">R$ 0,00</strong>
-        <small>Vindas de extrato ou cadastro antigo</small>
+        <small>Manuais, importadas ou antigas</small>
       </article>
     </section>
 
@@ -69,13 +70,20 @@
       <article class="panel quick-panel">
         <div class="panel-head">
           <div>
-            <span class="eyebrow">Gasto rápido</span>
-            <h3>Adicionar despesa</h3>
+            <span id="formEyebrow" class="eyebrow">Lançamento rápido</span>
+            <h3 id="formTitle">Adicionar gasto</h3>
           </div>
         </div>
 
         <form id="expenseForm" class="expense-form" novalidate>
           <input id="expenseId" type="hidden" />
+          <div class="type-toggle" role="group" aria-label="Tipo de lançamento">
+            <input id="typeExpense" name="entryType" type="radio" value="expense" checked />
+            <label for="typeExpense">Gasto</label>
+            <input id="typeIncome" name="entryType" type="radio" value="income" />
+            <label for="typeIncome">Receita</label>
+          </div>
+
           <label class="amount-field" for="amount">
             <span>Valor</span>
             <input id="amount" type="text" inputmode="numeric" placeholder="0,00" required />
@@ -123,7 +131,7 @@
 
           <div class="form-actions">
             <button id="btnCancelEdit" class="btn ghost hidden" type="button">Cancelar</button>
-            <button class="btn primary" type="submit">Salvar gasto</button>
+            <button id="btnSaveEntry" class="btn primary" type="submit">Salvar gasto</button>
           </div>
         </form>
       </article>
@@ -223,5 +231,6 @@
   </main>
 
   <script src="app.js?v=20260601-ai"></script>
+  <script src="entry-types.js?v=20260602-receitas"></script>
 </body>
 </html>
