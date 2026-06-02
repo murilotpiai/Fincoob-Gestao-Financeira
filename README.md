@@ -1,44 +1,34 @@
 # Fincoob - Gestao Financeira Pessoal
 
-Aplicativo web para controle de gastos pessoais, feito com HTML, CSS e JavaScript puro. A proposta atual do Fincoob e ser simples, rapido e eficiente: registrar despesas, importar extratos, analisar o mes e receber dicas financeiras com apoio de IA.
+Fincoob e um aplicativo web para controle de gastos pessoais, importacao de extratos e analise financeira com assistente IA via Gemini. O foco do projeto e ser simples, rapido e util no dia a dia: registrar gastos com poucos campos, visualizar relatorios claros e receber sugestoes praticas de economia.
 
+- Site publicado: https://project-739nb.vercel.app/
+- Assistente IA: https://project-739nb.vercel.app/ia
 - Repositorio: https://github.com/murilotpiai/Fincoob-Gestao-Financeira
 
-## Objetivo
-
-Criar uma ferramenta pessoal para entender para onde o dinheiro esta indo, sem excesso de telas e sem burocracia. O foco e facilitar o registro de gastos e transformar os dados em relatorios claros para tomada de decisao.
-
-## Funcionalidades
+## Principais recursos
 
 - Cadastro rapido de gastos com valor, descricao, categoria, data, pagamento e observacao.
-- Sugestao automatica de categoria com base na descricao.
+- Sugestao automatica de categoria a partir da descricao.
 - Relatorio mensal com total de gastos, media diaria, maior categoria e entradas detectadas.
-- Graficos de gastos por categoria e evolucao diaria.
+- Graficos com Chart.js para categoria e evolucao diaria.
+- Importacao de extratos em CSV, TXT, OFX, XLS e XLSX.
+- Deteccao de possiveis lancamentos duplicados.
 - Historico editavel de lancamentos.
-- Importacao e analise de extratos em CSV, TXT, OFX, XLS e XLSX.
-- Deteccao de possiveis duplicados ao importar extratos.
-- Exportacao dos lancamentos em CSV.
-- Tema claro e escuro com visual futurista.
+- Exportacao dos dados em CSV.
+- Tema claro/escuro com visual futurista.
 - Segunda pagina com assistente financeiro IA.
-- Modo local de conselhos quando o site e aberto pelo arquivo `file://`.
-- Endpoint seguro para conectar com o Gemini sem expor a chave no navegador.
+- Endpoint serverless seguro para Gemini, sem expor chave no navegador.
 
-## Assistente IA
+## Como funciona
 
-A pagina `frontend/ia.html` le os dados salvos no LocalStorage do Fincoob e permite conversar com um assistente financeiro. Quando o site esta rodando apenas como arquivo local, o assistente usa uma analise local simples. Quando publicado com backend/serverless, ele chama o endpoint:
+O Fincoob salva os dados no `LocalStorage` do navegador. A pagina principal (`frontend/index.html`) cuida do cadastro, relatorio e importacao de extratos. A pagina de IA (`frontend/ia.html`) le o resumo financeiro salvo localmente e envia a pergunta para o endpoint:
 
 ```text
 frontend/api/finance-coach.js
 ```
 
-Para ativar o Gemini real no servidor, configure as variaveis de ambiente:
-
-```env
-GEMINI_API_KEY=sua_chave_do_google_ai_studio
-GEMINI_MODEL=gemini-2.5-flash
-```
-
-Nunca coloque a chave do Gemini dentro do HTML, CSS ou JavaScript publico.
+Esse endpoint roda na Vercel e chama a Gemini API usando variaveis de ambiente do servidor.
 
 ## Tecnologias
 
@@ -49,33 +39,50 @@ Nunca coloque a chave do Gemini dentro do HTML, CSS ou JavaScript publico.
 - Chart.js
 - SheetJS
 - Gemini API
-- Vercel/serverless para o endpoint da IA
+- Vercel Serverless Functions
 
-## Como executar localmente
+## Rodar localmente
 
-Abra o arquivo abaixo no navegador:
+Nao existe etapa de build para usar o app localmente. Abra:
 
 ```text
 frontend/index.html
 ```
 
-Para acessar o assistente:
+Para abrir a pagina da IA localmente:
 
 ```text
 frontend/ia.html
 ```
 
-## Como publicar com IA
+Ao abrir pelo `file://`, a IA usa um modo local de fallback. Para usar Gemini de verdade, publique na Vercel.
 
-1. Publique a pasta `frontend` como raiz do projeto em uma plataforma que suporte rotas serverless, como Vercel.
-2. Configure `GEMINI_API_KEY` nas variaveis de ambiente.
-3. Acesse o site pela URL publicada, nao pelo `file://`.
-4. A pagina da IA chamara automaticamente `/api/finance-coach`.
+## Deploy na Vercel
+
+Configuracao correta do projeto:
+
+```text
+Root Directory: frontend
+Build Command: vazio
+Output Directory: vazio
+Install Command: vazio
+```
+
+Variaveis de ambiente:
+
+```env
+GEMINI_API_KEY=sua_chave_do_google_ai_studio
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+`GEMINI_MODEL` e opcional, porque o endpoint ja usa `gemini-2.5-flash` como padrao.
+
+Importante: nunca coloque a chave do Gemini dentro de arquivos publicos como HTML, CSS ou JavaScript do frontend.
 
 ## Estrutura
 
 ```text
-Fincoob-Gestao-Financeira-main/
+Fincoob-Gestao-Financeira/
 |-- frontend/
 |   |-- api/
 |   |   `-- finance-coach.js
@@ -84,11 +91,19 @@ Fincoob-Gestao-Financeira-main/
 |   |-- app.js
 |   |-- ia.html
 |   |-- index.html
-|   `-- style.css
+|   |-- style.css
+|   `-- vercel.json
 |-- docs/
-|-- README.md
-`-- .gitignore
+|-- .gitignore
+`-- README.md
 ```
+
+## Seguranca
+
+- A chave `GEMINI_API_KEY` fica somente nas variaveis de ambiente da Vercel.
+- O navegador chama apenas `/api/finance-coach`.
+- O endpoint limita a resposta e orienta a IA para educacao financeira pessoal.
+- O assistente nao substitui consultoria financeira profissional.
 
 ## Autor
 
